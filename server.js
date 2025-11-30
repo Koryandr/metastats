@@ -18,25 +18,13 @@ app.get("/details/:appid", async (req, res) => {
     const gameData = await gameResponse.json();
     const game = gameData[appid];
 
-    if (!game || !game.success) {
-      return res.json({
-        appid,
-        name: `Игра ${appid} недоступна`,
-        header_image: null,
-        players: null
-      });
-    }
-
     let players = null;
-    try {
+    
       const playersResponse = await fetch(
         `https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=${appid}`
       );
       const playersData = await playersResponse.json();
       players = playersData.response?.player_count || null;
-    } catch (err) {
-      // Игнорируем ошибку получения онлайна
-    }
     
     res.json({
       appid,
@@ -51,7 +39,7 @@ app.get("/details/:appid", async (req, res) => {
       name: `Ошибка загрузки`,
       header_image: null,
       players: null
-    });
+    })
   }
 });
 
